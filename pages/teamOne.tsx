@@ -53,7 +53,6 @@ const Home: React.FC = () => {
     const { data } = await supabase.from("scoreboard").select();
     const scoreboard = data as Array<ScoreProps>;
     setScoreChart(scoreboard as Array<ScoreProps>);
-    console.log("scoreBoard", scoreboard);
     setScorePlot(
       scoreboard
         .sort((x, y) => {
@@ -69,16 +68,13 @@ const Home: React.FC = () => {
     );
   }
 
-  const updateScoreboard = async (team: TeamProps, add: boolean) => {
-    const id = team.name === "Lið 1" ? 1 : team.name === "Lið 2" ? 2 : 3;
-    const previousScore = scoreChart.find(
-      (x) => x.teamname === team.name
-    )?.score;
+  const updateScoreboard = async (add: boolean) => {
+    const previousScore = scoreChart.find((x) => x.teamname === "Lið 1")?.score;
     if (previousScore !== undefined) {
       const { error } = await supabase
         .from("scoreboard")
         .update({ score: add ? previousScore + 1 : previousScore - 1 })
-        .eq("id", id);
+        .eq("id", 1);
       getScoreboard();
     }
   };
@@ -94,35 +90,16 @@ const Home: React.FC = () => {
     );
   }
 
-  const checkboxUpdate = async (challenge: ChallengeProps, team: TeamProps) => {
-    let toAdd: boolean = false;
-    if (team.name === "Lið 1") {
-      toAdd = !challenge.team1;
-    } else if (team.name === "Lið 2") {
-      toAdd = !challenge.team2;
-    } else if (team.name === "Lið 3") {
-      toAdd = !challenge.team3;
-    }
+  const checkboxUpdate = async (challenge: ChallengeProps) => {
+    const toAdd: boolean = !challenge.team1;
 
-    if (team.name === "Lið 1") {
-      const { error } = await supabase
-        .from("challenges")
-        .update({ team1: !challenge.team1 })
-        .eq("id", challenge.id);
-    } else if (team.name === "Lið 2") {
-      const { error } = await supabase
-        .from("challenges")
-        .update({ team2: !challenge.team2 })
-        .eq("id", challenge.id);
-    } else if (team.name === "Lið 3") {
-      const { error } = await supabase
-        .from("challenges")
-        .update({ team3: !challenge.team3 })
-        .eq("id", challenge.id);
-    }
+    const { error } = await supabase
+      .from("challenges")
+      .update({ team1: !challenge.team1 })
+      .eq("id", challenge.id);
 
     getChallenges();
-    updateScoreboard(team, toAdd);
+    updateScoreboard(toAdd);
   };
 
   return (
@@ -130,9 +107,11 @@ const Home: React.FC = () => {
       <TeamOverview>
         <TeamTitle>Lið 1</TeamTitle>
         <TeamTeammates>
-          {team.teammates.map((name) => (
-            <TeammateName>{name}</TeammateName>
-          ))}
+          {teams
+            .filter((x) => x.name === "Lið 1")[0]
+            .teammates.map((teammate) => {
+              return <TeammateName>{teammate}</TeammateName>;
+            })}
         </TeamTeammates>
       </TeamOverview>
 
@@ -142,12 +121,8 @@ const Home: React.FC = () => {
             <div>
               <label>
                 <Checkbox
-                  checked={
-                    (team.name === "Lið 1" && challenge.team1) ||
-                    (team.name === "Lið 2" && challenge.team2) ||
-                    (team.name === "Lið 3" && challenge.team3)
-                  }
-                  onChange={() => checkboxUpdate(challenge, team)}
+                  checked={challenge.team1}
+                  onChange={() => checkboxUpdate(challenge)}
                 />
                 <span>{challenge.title}</span>
               </label>
