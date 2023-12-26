@@ -46,7 +46,6 @@ const Home: React.FC = () => {
     const { data } = await supabase.from("scoreboard").select();
     const scoreboard = data as Array<ScoreProps>;
     setScoreChart(scoreboard as Array<ScoreProps>);
-    console.log("scoreBoard", scoreboard);
     setScorePlot(
       scoreboard
         .sort((x, y) => {
@@ -62,16 +61,13 @@ const Home: React.FC = () => {
     );
   }
 
-  const updateScoreboard = async (team: TeamProps, add: boolean) => {
-    const id = team.name === "Lið 1" ? 1 : team.name === "Lið 2" ? 2 : 3;
-    const previousScore = scoreChart.find(
-      (x) => x.teamname === team.name
-    )?.score;
+  const updateScoreboard = async (add: boolean) => {
+    const previousScore = scoreChart.find((x) => x.teamname === "Lið 3")?.score;
     if (previousScore !== undefined) {
       const { error } = await supabase
         .from("scoreboard")
         .update({ score: add ? previousScore + 1 : previousScore - 1 })
-        .eq("id", id);
+        .eq("id", 3);
       getScoreboard();
     }
   };
@@ -87,68 +83,44 @@ const Home: React.FC = () => {
     );
   }
 
-  const checkboxUpdate = async (challenge: ChallengeProps, team: TeamProps) => {
-    let toAdd: boolean = false;
-    if (team.name === "Lið 1") {
-      toAdd = !challenge.team1;
-    } else if (team.name === "Lið 2") {
-      toAdd = !challenge.team2;
-    } else if (team.name === "Lið 3") {
-      toAdd = !challenge.team3;
-    }
+  const checkboxUpdate = async (challenge: ChallengeProps) => {
+    const toAdd: boolean = !challenge.team3;
 
-    if (team.name === "Lið 1") {
-      const { error } = await supabase
-        .from("challenges")
-        .update({ team1: !challenge.team1 })
-        .eq("id", challenge.id);
-    } else if (team.name === "Lið 2") {
-      const { error } = await supabase
-        .from("challenges")
-        .update({ team2: !challenge.team2 })
-        .eq("id", challenge.id);
-    } else if (team.name === "Lið 3") {
-      const { error } = await supabase
-        .from("challenges")
-        .update({ team3: !challenge.team3 })
-        .eq("id", challenge.id);
-    }
+    const { error } = await supabase
+      .from("challenges")
+      .update({ team3: !challenge.team3 })
+      .eq("id", challenge.id);
 
     getChallenges();
-    updateScoreboard(team, toAdd);
+    updateScoreboard(toAdd);
   };
 
   return (
     <div>
-      {teams.map((team) => {
+      <TeamOverview>
+        <TeamTitle>Lið 3</TeamTitle>
+        <TeamTeammates>
+          {teams
+            .filter((x) => x.name === "Lið 3")[0]
+            .teammates.map((teammate) => {
+              return <TeammateName key={teammate}>{teammate}</TeammateName>;
+            })}
+        </TeamTeammates>
+      </TeamOverview>
+
+      {checkedChallenges.map((challenge) => {
         return (
-          <TeamOverview>
-            <TeamTitle>{team.name}</TeamTitle>
-            <TeamTeammates>
-              {team.teammates.map((name) => (
-                <TeammateName>{name}</TeammateName>
-              ))}
-              {checkedChallenges.map((challenge) => {
-                return (
-                  <ChallengeItem key={challenge.id}>
-                    <div>
-                      <label>
-                        <Checkbox
-                          checked={
-                            (team.name === "Lið 1" && challenge.team1) ||
-                            (team.name === "Lið 2" && challenge.team2) ||
-                            (team.name === "Lið 3" && challenge.team3)
-                          }
-                          onChange={() => checkboxUpdate(challenge, team)}
-                        />
-                        <span>{challenge.title}</span>
-                      </label>
-                    </div>
-                  </ChallengeItem>
-                );
-              })}
-            </TeamTeammates>
-          </TeamOverview>
+          <ChallengeItem key={challenge.id}>
+            <div>
+              <label>
+                <Checkbox
+                  checked={challenge.team3}
+                  onChange={() => checkboxUpdate(challenge)}
+                />
+                <span>{challenge.title}</span>
+              </label>
+            </div>
+          </ChallengeItem>
         );
       })}
 
