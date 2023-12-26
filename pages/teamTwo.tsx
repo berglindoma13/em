@@ -97,49 +97,61 @@ const Home: React.FC = () => {
 
   return (
     <div>
-      <TeamOverview>
-        <TeamTitle>Lið 2</TeamTitle>
-        <TeamTeammates>
-          {teams
-            .filter((x) => x.name === "Lið 2")[0]
-            .teammates.map((teammate) => {
-              return <TeammateName key={teammate}>{teammate}</TeammateName>;
-            })}
-        </TeamTeammates>
-      </TeamOverview>
+      <BackgroundImage src="/chris-robert-8Pmlah3Pkhg-unsplash.jpg"></BackgroundImage>
+      <Page>
+        <div>
+          <TeamOverview>
+            <TeamTitle>Lið 2</TeamTitle>
+            <TeamTeammates>
+              {teams
+                .filter((x) => x.name === "Lið 2")[0]
+                .teammates.map((teammate) => {
+                  return <TeammateName key={teammate}>{teammate}</TeammateName>;
+                })}
+            </TeamTeammates>
+          </TeamOverview>
 
-      {checkedChallenges.map((challenge) => {
-        return (
-          <ChallengeItem key={challenge.id}>
-            <div>
-              <label>
-                <Checkbox
-                  checked={challenge.team2}
-                  onChange={() => checkboxUpdate(challenge)}
-                />
-                <span>{challenge.title}</span>
-              </label>
-            </div>
-          </ChallengeItem>
-        );
-      })}
+          {checkedChallenges.map((challenge) => {
+            return (
+              <ChallengeItem key={challenge.id}>
+                <div>
+                  <label>
+                    <Checkbox
+                      checked={challenge.team2}
+                      onChange={() => checkboxUpdate(challenge)}
+                    />
+                    <span>{challenge.title}</span>
+                  </label>
+                </div>
+              </ChallengeItem>
+            );
+          })}
+        </div>
 
-      <XYPlot
-        height={300}
-        width={300}
-        animation={true}
-        stackBy="y"
-        xType="ordinal"
-      >
-        <XAxis />
-        <YAxis />
-        <VerticalBarSeries data={scorePlot} barWidth={1} />
-      </XYPlot>
+        <XYPlot
+          height={300}
+          width={300}
+          animation={true}
+          stackBy="y"
+          xType="ordinal"
+        >
+          <XAxis />
+          <YAxis />
+          <VerticalBarSeries data={scorePlot} barWidth={1} />
+        </XYPlot>
+      </Page>
     </div>
   );
 };
 
 export default Home;
+
+const Page = styled.div`
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
 
 const TeamOverview = styled.div`
     display:flex;
@@ -173,4 +185,14 @@ const ChallengeItem = styled.div`
     display;flex;
     flex-direction: row;
     
+`;
+
+const BackgroundImage = styled.img`
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 100vw;
+  z-index: -1;
+  object-fit: cover;
 `;
