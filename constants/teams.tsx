@@ -6,18 +6,18 @@ export interface TeamProps {
 
 export const teams: Array<TeamProps> = [
   {
-    name: "Lið 1",
+    name: "Íkornarnir",
     score: 0,
-    teammates: ["Freyja", "Helga", "Hrafn", "Ómar"],
+    teammates: ["Freyja", "Helga", "Agnes", "Eyþór"],
   },
   {
-    name: "Lið 2",
+    name: "Gíraffarnir",
     score: 0,
-    teammates: ["Davíð", "Klara", "Agnes", "Gunnhildur"],
+    teammates: ["Ómar", "Klara", "Hrafn", "Gunnhildur"],
   },
   {
-    name: "Lið 3",
+    name: "Kindurnar",
     score: 0,
-    teammates: ["Hanna", "Eyþór", "Berglind", "Guðný"],
+    teammates: ["Hanna", "Davíð", "Berglind", "Guðný"],
   },
 ];
