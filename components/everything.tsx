@@ -319,6 +319,10 @@ const TeamOverOverview = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+  }
 `;
 
 const PlotWrapper = styled.div`
@@ -341,10 +345,11 @@ const BetItem = styled.div`
   flex-direction: row;
   justify-content: space-between;
   padding: 0 5px;
+  font-size: 15px;
 `;
 
 const BetItemInput = styled.input`
-  width: 50px;
+  width: 30px;
   height: 40px;
 `;
 
