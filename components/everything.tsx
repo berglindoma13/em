@@ -27,6 +27,7 @@ interface ChallengeProps {
   team2: boolean;
   team3: boolean;
   id: string;
+  onlyForTeam?: number;
 }
 
 interface ScoreProps {
@@ -222,29 +223,31 @@ const Everything: React.FC<EverythingProps> = ({
         </TeamOverOverview>
         <BetTitle>Áskorunarleikur göngugarpa</BetTitle>
         {checkedChallenges.map((challenge) => {
-          let isChecked = false;
-          if (teamId === 1) {
-            isChecked = challenge.team1;
+          if (!challenge.onlyForTeam || challenge.onlyForTeam === teamId) {
+            let isChecked = false;
+            if (teamId === 1) {
+              isChecked = challenge.team1;
+            }
+            if (teamId === 2) {
+              isChecked = challenge.team2;
+            }
+            if (teamId === 3) {
+              isChecked = challenge.team3;
+            }
+            return (
+              <ChallengeItem key={challenge.id}>
+                <div>
+                  <label>
+                    <Checkbox
+                      checked={isChecked}
+                      onChange={() => checkboxUpdate(challenge)}
+                    />
+                    <span>{challenge.title}</span>
+                  </label>
+                </div>
+              </ChallengeItem>
+            );
           }
-          if (teamId === 2) {
-            isChecked = challenge.team2;
-          }
-          if (teamId === 3) {
-            isChecked = challenge.team3;
-          }
-          return (
-            <ChallengeItem key={challenge.id}>
-              <div>
-                <label>
-                  <Checkbox
-                    checked={isChecked}
-                    onChange={() => checkboxUpdate(challenge)}
-                  />
-                  <span>{challenge.title}</span>
-                </label>
-              </div>
-            </ChallengeItem>
-          );
         })}
         <PlotWrapper>
           <XYPlot
